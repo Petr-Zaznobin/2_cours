@@ -3,20 +3,15 @@ using namespace std;
 
 class C {
 	int N;
-	unsigned char arr[];
+	unsigned char* arr;
 public:
 	C(int _N) {
         N = _N;
-		unsigned char* arr = new unsigned char[N];
-	}
-
-    void get_arr(){
-        for (int i = 0; i< N; i++){
-            cout << arr[i];
+		arr = new unsigned char[N];
+        for (int i = 0; i < N; i++){
+            arr[i] = 0;
         }
-    }
-
-
+	}
 
 	int check_ind(int n) {
 		int ind = n / (8 * sizeof(unsigned char));
@@ -29,11 +24,11 @@ public:
 	}
 
 	void num_to_0(int ind, int n) {
-		arr[ind] |= ~1 << (n % (8 * sizeof(unsigned char)));
+		arr[ind] &= ~1 << (n % (8 * sizeof(unsigned char)));
 	}
 
-    void get_sq(int ind, int n){
-        cout << (arr[ind] & (1<<(n%(8*sizeof (unsigned char)))));
+    int get(int ind, int n){
+        return((arr[ind] & (1<<(n%(8*sizeof(unsigned char))))));
     }
 
 	unsigned char operator [] (int ind) const {
@@ -43,7 +38,7 @@ public:
 
 	~C() {
         N = 0;
-		delete [] &arr;
+		delete[]arr;
 	}
 };
 
@@ -52,26 +47,22 @@ public:
 
 int main()
 {
-	int N = 120;
+	int N = 20;
+    int num = N*8;
 	C arr(N);
-    for (int i = 0; i< N;i++){
+    
+    for (int i = 2; i<num; i++){
         int ind = arr.check_ind(i);
-        arr.num_to_1(ind, i);
-    }
-
-    for (int i = 2; i<N;i++){
-        int ind = arr.check_ind(i);
-        for (int j = i*i; j < N; j+=i){
-            arr.num_to_0(ind, j);
+        if (arr.get(ind, i) == 0){
+            for (int j = i*i; j<num; j+=i){
+                ind = arr.check_ind(j);
+                arr.num_to_1(ind, j);
+            }
+            cout << i << "\n";
         }
     }
 
-    for (int i = 0;i<N;i++){
-        int ind = arr.check_ind(i);
-        cout << i << ". ";
-        arr.get_sq(ind, i);
-        cout << "\n";
-    }
+
 }
 
 

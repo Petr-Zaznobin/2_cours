@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+
+int main(){
+    int n = 3;
+    int t;
+    int c = 0;
+    vector<int> ind (n+1);
+    vector<int> column;
+    vector<int> rows;
+    vector<int> value;
+    ind[0] = 0;
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j< n; j++){
+            cin >> t;
+            if (t!=0){
+                value.push_back(t);
+                column.push_back(j);
+                rows.push_back(i);
+                c++;
+            }
+        }
+        ind[i+1] = ind[i]+c;
+        c = 0;
+    }
+/*
+    for (auto x: value){
+        cout << x << " ";
+    }
+    cout << "\n";
+
+    for (auto x: column){
+        cout << x << " ";
+    }
+    cout << "\n";
+    for (auto x:ind){
+        cout << x << " ";
+    }
+    */
+
+//начинается конченая жуть: (если она работает, это чудо)
+    vector<vector<vector<int> > > arr (n, vector<vector<int> >  (n, vector<int> (2)));
+    vector<vector<int> > mas (n, vector<int> (2));
+    for (int i = 0; i < ind.size()-1; i++){
+        for (int j = ind[i]; j < ind[i + 1]; j++) {
+            vector<int> two;
+            two.push_back(value[j]);
+            two.push_back(i);
+            arr[column[j]].push_back(two);
+        }
+    }
+
+    /*
+    for(int i = 0; i< n;i++){
+        for (auto x :arr[i]){
+            for (auto y: x){
+                cout << y << ' ';
+            }
+            cout << "\n";
+        }
+        cout << "\n\t";
+    }
+*/
+
+    vector<int> new_val;
+    vector<int> colind(n+1);
+    vector<int> row;
+    colind[0] = 0;
+    c = 0;
+    for(int i = 0; i< n;i++){
+        for(auto x:arr[i]){
+            if (x[0] != 0){
+                new_val.push_back(x[0]);
+                row.push_back(x[1]);
+                c++;
+            }
+        }
+        colind[i+1] = colind[i] + c;
+        c = 0;
+    }
+
+    cout << "value:\n";
+    for (auto x: new_val){
+        cout << x << " ";
+    }
+    cout << "\n";
+    cout << "colInd:\n";
+    for (auto x: colind){
+        cout << x << " ";
+    }
+    cout << "\n";
+    cout << "rows:\n";
+    for (auto x:row){
+        cout << x << " ";
+    }
+}

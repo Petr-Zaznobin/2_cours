@@ -1,0 +1,185 @@
+#include <iostream>
+#include <chrono>
+using namespace std;
+using namespace chrono;
+
+
+class CRS {
+private:
+	int* val;
+	int* col;
+	int* rowI;
+	int n;
+	int size;
+public:
+	CRS(int _n, int _size) {
+		n = _n;
+		size = _size;
+		val = new int[size];
+		col = new int[size];
+		rowI = new int[n+1];
+	}
+
+	void FillCRS(int** matrix) {
+		rowI[0] = 0;
+		int c = 0;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (matrix[i][j] != 0) {
+					val[c] = matrix[i][j];
+					col[c] = j;
+				}
+			}
+			rowI[i + 1] = c;
+		}
+	}
+
+	CRS Transpose() {
+		CRS A(n, size);
+		for (int i = 0; i < size; i++) {
+			A.rowI[col[i] + 1]++;
+		}
+		for (int i = 0; i < n; i++) {
+			A.rowI[i + 1] += A.rowI[i];
+		}
+		for (int i = 0; i < n; i++) {
+			for (int j = rowI[i]; j < rowI[i + 1]; j++) {
+				A.val[A.rowI[col[j]]] = val[j];
+				A.col[A.rowI[col[j]]] = i;
+				A.rowI[col[j]]++;
+			}
+		}
+		for (int i = n; i > 0; i--) {
+			A.rowI[i] = A.rowI[i - 1];
+		}
+		A.rowI[0] = 0;
+		return A;
+	}
+
+	CRS Mult(CRS C) {
+		if (size != C.size) {
+			cout << "ERROR";
+		}
+		else {
+			int* row = new int[size];
+			row[0] = 0;
+			int c = 0;
+			int sum;
+			int** res = new int* [n];
+			for (int i = 0; i < n; i++) {
+				res[i] = new int[n];
+			}
+			int ai = 0;
+			int bti = 0;
+			CRS B(n, size);
+			B = C.Transpose();
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < n; j++) {
+					sum = 0;
+					ai = rowI[i];
+					bti = B.rowI[j];
+					while (ai < rowI[i + 1] && bti < B.rowI[j + 1]) {
+						if (col[ai] == B.col[bti]) {
+							sum += val[ai] + B.val[bti];
+							ai++;
+							bti++;
+							c++;
+						}
+						else if (col[ai] < B.col[bti])
+							ai++;
+						else
+							bti++;
+					}
+					res[i][j] = sum;
+				}
+				row[i + 1] = c;
+			}
+			CRS RES(c, size);
+			for (int i = 0; i < size; i++) {
+				RES.rowI[i] = row[i];
+			}
+			int t = 0;
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < n; j++) {
+					if (res[i] != 0) {
+						RES.col[t] = j;
+						RES.val[t] = res[i][j];
+						t++;
+					}
+				}
+			}
+			return RES;
+		}
+	}
+
+	CRS& operator=(const CRS& a) 
+	{
+		if ((a.n != n) || (size != a.size)) {
+			delete[]val;
+			delete[]col;
+			delete[]rowI;
+			val = new int[a.size];
+			col = new int[a.size];
+			rowI = new int[a.n];
+		}
+		for (int i = 0; i < n; i++) {
+			col[i] = a.col[i];
+			val[i] = a.val[i];
+		}
+		for (int i = 0; i < size; i++) {
+			rowI[i] = a.rowI[i];
+		}
+		return *this;
+	}
+
+	void out() {
+		for (int i = 0; i < size; i++) {
+			cout << val[i] << " ";
+		}
+		cout << "\n";
+		for (int i = 0; i < size; i++) {
+			cout << col[i] << " ";
+		}
+		cout << "\n";
+		for (int i = 0; i < n; i++) {
+			cout << rowI[i] << " ";
+		}
+		cout << "\n";
+	}
+
+	~CRS() {
+		delete[]val;
+		delete[]col;
+		delete[]rowI;
+		n = 0;
+		size = 0;
+	}
+};
+
+int main(){
+	int n;
+	int size;
+	cin >> size;
+	cin >> n;
+	int** a = new int* [n];
+	for (int i = 0; i < n; i++) {
+		a[i] = new int;
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			cin >> a[i][j];
+		}
+	}
+	CRS A(n, size);
+	CRS B(n, size);
+	A.FillCRS(a);
+	B.FillCRS(a);
+	B = B.Transpose();
+	CRS C (n, size);
+	C = A.Mult(B);
+	C.out();
+
+
+}
+

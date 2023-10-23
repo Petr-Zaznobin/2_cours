@@ -1,0 +1,93 @@
+#include <iostream>
+#include<vector>
+using namespace std;
+
+
+template <typename T>
+class DStack {
+private:
+	size_t size;
+	int f_end, s_end;
+	T* both;
+public:
+	DStack(size_t size_) {
+		size = size_;
+		both = new T [size];
+		f_end = 0;
+		s_end = size-1;
+	}
+	DStack(size_t size_, T* mem) {
+		size = size_;
+		both = mem;
+		f_end = 0;
+		s_end = size - 1;
+	}
+	int isFull(){
+		return (f_end == s_end);
+	}
+	int isEmpty_f() {
+		return (f_end == 0);
+	}
+	int isEmpty_s() {
+		return((size-1) == s_end);
+	}
+	void push_f(T elem) {
+		if (!isFull()) {
+			both[f_end++] = elem;
+		}
+		else throw out_of_range("First stack is full");
+	}
+	void push_s(T elem) {
+		if (!isFull()) {
+			both[s_end--] = elem;
+		}
+		else throw out_of_range("Second stack is full");
+	}
+	T pop_f() {
+		if (!isEmpty_f()) {
+			return both[f_end--];
+		}
+		else throw out_of_range("First stack is empty");
+	}
+	T pop_s() {
+		if (!isEmpty_s()) {
+			return both[s_end++];
+		}
+		else throw out_of_range("Second stack is empty");
+	}
+	~DStack() {
+		size = 0;
+		delete[]both;
+		f_end = 0;
+		s_end = 0;
+	}
+};
+
+template<typename T>
+class Two_n_stack {
+private:
+	size_t size;
+	int n;				//count of stacks
+	vector<DStack<T>*> stacks;
+	T* t;
+public:
+	Two_n_stack(size_t size_, int n_) {
+		size = size_;
+		n = n_;
+		t = new T[size*n];
+		for (int i = 0; i < n / 2; i++) {
+			stacks.push_back(new DStack(size, (t + i*size)));
+		}
+	}
+	int Get_index(int ind) {
+		return n / ind;
+	}
+
+};
+
+
+int main() {
+	
+}
+
+

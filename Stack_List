@@ -1,0 +1,76 @@
+#include <iostream>
+#include<vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+
+
+template <typename T>
+class StList {
+private:
+	class Node {
+	public:
+		T data = {};
+		Node* next;
+		Node() {
+			next = nullptr;
+		}
+
+		Node(T data_) {
+			data = data_;
+			next = nullptr;
+		}
+
+		~Node() {
+			data = {};
+		}
+
+		void change_data(T data_) {
+			data = data_;
+		}
+	};
+	Node* head;
+	Node* tail;
+	size_t size;
+	//bool isCircle;
+
+
+public:
+	List() {
+		head = new Node;
+		size = 0;
+		head.next = new Node;
+	}
+	~List() {
+		Node<T>* tmp = head;
+		
+	}
+	void push(T data) {
+		Node* p = new Node;
+		p->next = head;
+		p->data = data;
+		head = p;
+		size++;
+	}
+	Node<T> pop() {
+		Node<T>* point = head.get_next();
+		for (int i = 1; i < size - 1; i++) {
+			point = point.get_next();
+		}
+		tail = point;
+		return point->get_next;
+	}
+
+	bool isEmpty() {
+		return size == 0;
+	}
+};
+
+
+int main() {
+	
+
+}
+
+

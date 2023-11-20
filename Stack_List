@@ -2,75 +2,80 @@
 #include<vector>
 #include <string>
 #include <algorithm>
+
 using namespace std;
 
 
-
-template <typename T>
-class StList {
+template<typename T>
+class List {
 private:
-	class Node {
-	public:
-		T data = {};
-		Node* next;
-		Node() {
-			next = nullptr;
-		}
+    class Node {
+    public:
+        T data = {0};
+        Node *next;
 
-		Node(T data_) {
-			data = data_;
-			next = nullptr;
-		}
+        Node() {
+            next = nullptr;
+        }
 
-		~Node() {
-			data = {};
-		}
+        Node(T data_) {
+            data = data_;
+            next = nullptr;
+        }
 
-		void change_data(T data_) {
-			data = data_;
-		}
-	};
-	Node* head;
-	Node* tail;
-	size_t size;
-	//bool isCircle;
+        ~Node() {
+            data = 0;
+        }
+
+        void change_data(T data_) {
+            data = data_;
+        }
+    };
+
+    Node *head;
+    Node *tail;
+    size_t size;
+    //bool isCircle;
 
 
 public:
-	List() {
-		head = new Node;
-		size = 0;
-		head.next = new Node;
-	}
-	~List() {
-		Node<T>* tmp = head;
-		
-	}
-	void push(T data) {
-		Node* p = new Node;
-		p->next = head;
-		p->data = data;
-		head = p;
-		size++;
-	}
-	Node<T> pop() {
-		Node<T>* point = head.get_next();
-		for (int i = 1; i < size - 1; i++) {
-			point = point.get_next();
-		}
-		tail = point;
-		return point->get_next;
-	}
+    List() {
+        head = new Node;
+        size = 0;
+        head->next = new Node;
+    }
 
-	bool isEmpty() {
-		return size == 0;
-	}
+    ~List() {
+        Node *tmp = head;
+
+    }
+
+    void push(T data) {
+        Node *p = new Node;
+        p->next = head;
+        p->data = data;
+        head = p;
+        size++;
+    }
+
+    Node pop() {
+        Node *p = new Node;
+        p = head;
+        head = head->next;
+        size--;
+        return p->data;
+    }
+
+    bool isEmpty() {
+        return size == 0;
+    }
 };
 
 
 int main() {
-	
+    List<int> stack();
+    for (int i = 0; i< 5; i++){
+        stack().push(i);
+    }
 
 }
-
-

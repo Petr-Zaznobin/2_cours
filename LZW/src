@@ -1,0 +1,61 @@
+#include <iostream>
+#include<vector>
+#include <string>
+#include <algorithm>
+#include <fstream>
+#include <map>
+
+using namespace std;
+
+void parse(vector<char>& chars, vector<int>& fr) {
+	map<string, unsigned int> dict;
+	string path = "War_And_Peace.txt";
+	ifstream fin;
+	unsigned int c =0;
+	fin.open(path);
+	if (!fin.is_open()) {
+		cout << "ERROR OPEN!";
+	}
+	else {
+		char ch;
+		int i;
+		while (!fin.eof()) {
+			fin >> ch;
+			string str;
+			str = ch;
+			if (dict.find(str) == dict.end()) {
+				if (c < 16) {
+					c++;
+					dict[str]=0;
+				}
+			}
+			else {
+				if (c < 16) {
+					string str2;
+					i = 0;
+					while (dict[str] != 0) {
+						i++;
+						fin >> ch;
+						str2 = ch;
+						str += str2;
+					}
+					str2 = ch;
+					str += str2;
+					dict[str] = 0;
+					for (int j = 0; j < i - 1; j++) {
+
+					}
+				}
+				dict[str]++;
+			}
+			
+		}
+	}
+
+}
+
+
+int main() {
+	setlocale(LC_ALL, "ru");
+
+}

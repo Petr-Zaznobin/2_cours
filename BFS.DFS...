@@ -1,0 +1,91 @@
+#include <iostream>
+#include <stack>
+#include<queue>
+#include <vector>
+
+template<typename T>
+class Node {
+private:
+    T data;
+    Node* l;
+    Node* r;
+public:
+    Node(T data_ = {}, Node* l_ = nullptr; Node* r_ = nullptr) {
+        data = data_;
+        l = l_;
+        r = r_;
+    }
+    ~Node() {
+        data = {};
+        l = nullptr;
+        r = nullptr;
+    }
+}; 
+
+template<typename T>
+class TTree {
+private:
+    Node<T>* head;
+public:
+    TTree(T data) {
+        head = new Node(data);
+    }
+    ~TTree() {
+        delete[] head;
+    }
+    Node<T>* search(T data) {
+        Node* cur = head;
+        while (cur) {
+            if (cur->data = data)
+                return  cur;
+            if (cur->data > data) {
+                cur = cur->l;
+            }
+            else
+                cur = cur->r;
+        }
+        return nullptr;
+    }
+
+    void add(Node* nd) {
+        Node* cur = head;
+        if (cur == nullptr) {
+            head = nd;
+            return;
+        }
+        while (1) {
+            if (cur->data > nd->data)
+                if (cur->l)
+                    cur = cur->l;
+                else
+                    break;
+            else
+                if (cur->r)
+                    cur = cur->r;
+                else
+                    break;
+        }
+        if (cur->data > nd->data)
+            cur->l = nd;
+        else
+            cur->r = nd;
+    }
+    
+
+};
+
+int main()
+{   
+    Node<int> nd2(2);
+    Node<int> nd7(7);
+    Node<int> nd6(6);
+    Node<int> nd1(-1);
+    Node<int> nd4(4);
+    TTree<int> tree(5);
+    tree.add(&nd2);
+    tree.add(&nd7);
+    tree.add(&nd6);
+    tree.add(&nd1);
+    tree.add(&nd4);
+}
+

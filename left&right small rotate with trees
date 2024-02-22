@@ -2,7 +2,7 @@
 #include <stack>
 #include<queue>
 #include <vector>
-
+ //ЗАПИХНУТЬ NODE В КЛАСС, ИЗМЕНЯТЬ В ДЕРЕВЕ НАПРЯМУЮ, ПОТОМУ ЧТО ИНАЧЕ МЕНЯЮ ЛОКАЛЬНЫЕ КОПИИ
 class Node {
 private:
     Node* l;
@@ -81,8 +81,8 @@ public:
             Node x1(x->getL(), y->getL(), y->getH());
             Node y1(&x1, y->getR());
             x1.addParent(&y1);
-            delete x;
-            delete y;
+            x = &x1;
+            y = &y1;
         }
         else {
             Node* tmp = x->getParent();
@@ -95,10 +95,20 @@ public:
             }
             else { Node tmp2(tmp->getL(), &y1, tmp->getH(), tmp->getParent()); tmp = &tmp2; }
 
-            delete x;
-            delete y;
+            x = &x1;
+            y = &y1;
 
         }
+    }
+
+    void big_left_rotate(Node* x, Node* y, Node* z) {
+        this->little_right_rotate(y, z);
+        this->little_left_rotate(x, z);
+    }
+
+    void big_right_rotate(Node* x, Node* y, Node* z) {
+        this->little_left_rotate(y, z);
+        this->little_right_rotate(x, y);
     }
 
 };

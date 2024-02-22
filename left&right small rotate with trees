@@ -1,0 +1,110 @@
+#include <iostream>
+#include <stack>
+#include<queue>
+#include <vector>
+
+class Node {
+private:
+    Node* l;
+    Node* r;
+    Node* parent;
+    int h;
+public:
+    Node(Node* l_ = nullptr, Node* r_ = nullptr, int h_ = 1, Node* parent_ = nullptr) {
+        l = l_;
+        r = r_;
+        h = h_;
+        parent = parent_;
+    }
+
+    int getH() { return this->h;}
+    Node* getL() { return this->l;}
+    Node* getR() { return this->r;}
+    Node* getParent() { return this->parent;}
+    void addParent(Node* pr) { this->parent = pr;}
+
+    int diff(Node* x)
+    {return abs(l->getH()- r->getH());}
+
+
+
+    bool operator ==(const Node* nd) const {return (this->l == nd->l && this->r == nd->r && this->h == nd->h);}
+    bool operator !=(const Node* nd) const { return !(*this == nd);}
+    void operator =(const Node* nd) { this->r = nd->r; this->l = nd->l; this->h = nd->h;}
+
+    ~Node() {
+        l = nullptr;
+        r = nullptr;
+    }
+}; 
+
+
+class Tree {
+private:
+    Node* head;
+public:
+    Tree() {
+        head = new Node();
+    }
+    ~Tree() {
+        delete[] head;
+    }
+   
+
+    void little_right_rotate(Node* x, Node* y) {
+        if (x == head) {
+            Node x1(y->getR(), x->getR(), y->getH());
+            Node y1(y->getL(), &x1);
+            x1.addParent(&y1);
+            delete x;
+            delete y;
+        }
+        else {
+            Node* tmp = x->getParent();
+            Node x1(y->getR(), x->getR(), y->getH());
+            Node y1(y->getL(), &x1, x->getH(), tmp);
+            x1.addParent(&y1);
+            if (tmp->getL() == x) {
+                Node tmp2(&y1, tmp->getR());
+                tmp = &tmp2;
+            }
+            else { Node tmp2(tmp->getL(), &y1, tmp->getH(), tmp->getParent()); tmp = &tmp2;}
+            
+            delete x;
+            delete y;
+           
+        }
+    }
+
+    void little_left_rotate(Node* x, Node* y) {
+        if (x == head) {
+            Node x1(x->getL(), y->getL(), y->getH());
+            Node y1(&x1, y->getR());
+            x1.addParent(&y1);
+            delete x;
+            delete y;
+        }
+        else {
+            Node* tmp = x->getParent();
+            Node x1(x->getL(), y->getL(), y->getH());
+            Node y1(&x1, y->getR());
+            x1.addParent(&y1);
+            if (tmp->getL() == x) {
+                Node tmp2(&y1, tmp->getR());
+                tmp = &tmp2;
+            }
+            else { Node tmp2(tmp->getL(), &y1, tmp->getH(), tmp->getParent()); tmp = &tmp2; }
+
+            delete x;
+            delete y;
+
+        }
+    }
+
+};
+
+int main()
+{   
+
+}
+

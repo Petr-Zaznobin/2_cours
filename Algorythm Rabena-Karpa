@@ -1,0 +1,72 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include "pluses.h"
+using namespace std;
+
+int m_hash(string data) {
+	int prime = 3;
+	int res = 0;
+	for (int i = 0; i < data.length(); i++) {
+		res += int(data[i]) + pow(prime, i);
+	}
+	return res;
+}
+
+int first_method (vector<char>ch) {
+	int count = 0;
+	int f = 0;
+	string templ = "мир";
+	for (int i = 0; i < ch.size()-3; i++) {
+		f = 0;
+		for (int j = 0; j < 3; j++) {
+			if (templ[j] == ch.at(i + j)) {
+				f = 1;
+			}
+			else f = 0;
+		}
+		if (f == 1) {
+			count++;
+		}
+	}
+	return count;
+}
+
+int second_method(vector<char> ch) {
+	int count = 0;
+	string templ = "мир";
+	int h = m_hash(templ);
+	string str;
+	for (int i = 2; i < ch.size(); i++) {
+		str = "";
+		string str = str + ch.at(i - 2) + ch.at(i - 1) + ch.at(i); //НЕТ ПРИВЕДЕНИЯ К СТРИНГУ НУЖНО ЧЕРЕЗ ЧАРЫ СДЕЛАТЬ
+		int h1 = m_hash(str);
+		if (h == h1) {
+			count++;
+		}
+	}
+	return count;
+}
+
+int main()
+{   
+	setlocale(LC_ALL, "RUS");
+	string path = ("War_And_Peace.txt");
+	vector<char> ch;
+	char c;
+	ifstream fin;
+	fin.open(path);
+	if (!fin.is_open()) {
+		cout << "ERROR OPEN!";
+	}
+	else {
+		while (!fin.eof()) {
+			fin >> c;
+			ch.push_back(c);
+		}
+	}
+	cout << first_method(ch) << endl;
+	cout << second_method(ch);
+}
+

@@ -1,0 +1,189 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <set>
+using namespace std;
+
+class Heap {
+private:
+	int len;
+	int* arr;
+public:
+	Heap(int len_, int* arr_) {
+		len = len_;
+		arr = arr_;
+	}
+
+	~Heap() {
+		len = 0;
+		delete[]arr;
+	}
+
+	int minChild(int i) {
+		if (2 * i + 2 < len) {
+			if (arr[2 * i + 1] < arr[2 * i + 2])
+				return 2 * i + 1;
+			else
+				return 2 * i + 2;
+		}
+		else
+			return 2 * i + 1;
+	}
+
+	void shiftUp(int i) {
+		while (i > 0 && arr[i] < arr[(i - 1) / 2]) {
+			swap(arr[i], arr[(i - 1) / 2]);
+			i = (i - 1) / 2;
+		}
+	}
+	void shiftDown(int i) {
+		while (i <= (len - 1) / 2) {
+			int IC = minChild(i);
+			if (arr[i] > arr[IC]) {
+				swap(arr[i], arr[IC]);
+				i = IC;
+			}
+			else
+				break;
+		}
+	}
+
+	int searchMin() {
+		return arr[0];
+	}
+
+	int popMin() {
+		int tmp = arr[0];
+		swap(arr[0], arr[len - 1]);
+		len = len-1;
+		shiftDown(0);
+		return tmp;
+	}
+
+	void heapfly() {
+		for (int i = (len - 1) / 2; i >= 0; i--) {
+			shiftDown(i);
+		}
+	}
+
+	int getLen() {
+		return len;
+	}
+
+	void merge(Heap tmp) {
+		int len_tmp = tmp.getLen();
+		int* arr_tmp = new int[len + len_tmp];
+		delete[]arr;
+		arr = new int[len + len_tmp];
+		memcpy(arr, arr_tmp, len + len_tmp);
+		heapfly();
+		delete[]arr_tmp;
+	}
+
+	friend ostream& operator <<(ostream& ostr, const Heap& h) {
+		cout << "\n";
+		for (int i = 0; i < h.len; i++) {
+			ostr << h.arr[i] << endl;
+		}
+		return ostr;
+	}
+};
+
+
+void swaps(double* a, double* b) {
+	double tmp;
+	tmp = (double)*a;
+	*a = *b;
+	*b = tmp;
+}
+
+void heap_sort(Heap h) {
+	h.heapfly();
+	cout << h << endl;
+	for (int i = 0; i < h.getLen(); i++) {
+		cout << h.popMin();
+	}
+}
+
+void merge(float* in, float* out, int l, int m, int r) {
+	int l1, l2;
+	int index = 0;
+	l1 = l;
+	l2 = m + 1;
+	while (l1 <= m && l2 <= r) {
+		if (in[l1] <= in[l2]) {
+			out[index++] = in[l1++];
+		}
+		else {
+			out[index++] = in[l2++];
+		}
+	}
+	while (l1 > m && l2 <= r) {
+		out[index++] = in[l2++];
+	}
+	while (l2 > r && l1 <= m) {
+		out[index++] = in[l1++];
+	}
+	for (int i = 0; i < index; i++) {
+		in[l + i] = out[i];
+	}
+}
+
+void merge_sort(float* arr, float* tmp, int l, int r) {
+	int m = l + ((r - l) / 2);
+	if (l == r) {
+		return;
+	}
+	merge_sort(arr, tmp, l, m);
+	merge_sort(arr, tmp, m + 1, r);
+	merge(arr, tmp, l, m, r);
+}
+
+long long int partition(double* mas, long long int l, long long int r) {
+	double mid = mas[l + (r - l) / 2];
+	while (l < r) {
+		while (mas[l] < mid && (l != r))
+			l++;
+		while (mas[r] > mid && (r != l))
+			r--;
+
+		if (l < r) {
+			if (mas[l] > mas[r]) {
+				swaps(&mas[l], &mas[r]);
+			}
+			else if (mas[l] == mas[r]) { // без этого возможно зацикливание
+				r--;
+			}
+		}
+
+	}
+
+
+	return r;
+}
+
+void quick_sort(double* mas, long long int l, long long int r) {
+	if (l <= r) {
+		long long int p = partition(mas, l, r);
+		quick_sort(mas, l, p - 1);
+		quick_sort(mas, p + 1, r);
+	}
+}
+
+
+int main()
+{   
+	int N = 0;
+	cin >> N;
+	int* arr = new int[N];
+	for (int i = 0; i < N; i++) {
+		cin >> arr[i];
+	}
+
+	Heap h(N, arr);
+	heap_sort(h);
+
+
+}
+

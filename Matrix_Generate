@@ -1,69 +1,145 @@
 //построить оставное дерево, то есть вершины, которые еще не присоеденены присоединяются к дереву
 #include <iostream>
-#include <time.h>
+#include <ctime>
 using namespace std;
 
 class graph {
 private:
-	int n;
-	double p;
-	int count_full = 0;
-	int** mat;
+    int n; //количество вершин
+    double p; //процент заполненности
+    int count_full = 0;
+    int** mat;
 public:
-	graph(int n_, double p_) {
-		n = n_;
-		p = p_;
-	}
-	~graph() {
-		n = 0;
-		p = 0;
-		delete[]mat;
-	}
-	void generate() {
-		double maxPeps = p;
-		double tmp = 0.0;
-		mat = new int*[(n+1)];
-		for (int i = 0; i < (n + 1); i++) {
-			mat[i] = new int[(n + 1)];
-		}
-		for (int i = 0; i < n+1; i++) {
-			for (int j = 0; j < n+1; j++) {
-				mat[i][j] = 0;
-			}
-		}
-		for (int i = 1; i < (n+1); i++) {
-			srand(time(NULL));
-			int num = (rand() % 100);
-			mat[0][i] = num;
-			mat[i][0] = num;
-			count_full++;
-		}
-		while (maxPeps>tmp) {	//n(n+1) - максимальное количество ребер на данном количестве вершин
-			srand(time(NULL));
-			int ind = rand() % (n+1);
-			int ind2 = rand() % (n + 1);
-			if (mat[ind][ind2] == 0 && ind != ind2) {
-				int num = rand() % 100;
-				mat[ind][ind2] = num;
-				mat[ind2][ind] = num;
-				count_full++;
-			}
-			tmp = double(count_full) / double((n * (n + 1)/2));
-		}
-	}
-	void printMat() {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				cout << mat[i][j] << " ";
-			}
-			cout << "\n";
-		}
-	}
+    graph(int n_, double p_) {
+        n = n_;
+        p = p_;
+    }
+    ~graph() {
+        n = 0;
+        p = 0;
+        delete[]mat;
+    }
+    void generate() {
+        double tmp = 0.0;
+        int i = 0;
+        int ind1;
+        int ind2;
+        srand(time(NULL)); // Инициализируем генератор случайных чисел.
+        mat = new int*[(n)];
+        for (int i = 0; i < (n); i++) {
+            mat[i] = new int[(n)];
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                mat[i][j] = 0;
+            }
+        }
+
+        ind1 = rand()%(n);
+        ind2 = rand()%(n);
+        while(ind1==ind2){ind2 = rand()%(n);}
+        mat[ind1][ind2] = 1 + rand()%100;
+        mat[ind2][ind1] = mat[ind1][ind2];
+        while (i < (n-2)){
+            ind2 = rand()%(n);
+            while(ind2==ind1 || mat[ind1][ind2]!=0){
+                ind2 = rand()%(n);
+            }
+            tmp = ind2;
+            ind2 = ind1;
+            ind1 = tmp;
+            mat[ind1][ind2] = rand()%100 + 1;
+            mat[ind2][ind1] = mat[ind1][ind2];
+            i++;
+        }
+        printMat();
+        MakeSvyaz();
+        printMat();
+        MakeProcent();
+    }
+
+    void MakeSvyaz(){
+        int ind1;
+        int ind2;
+        srand(time(NULL));
+        int count;
+        for (int i = 0; i < (n); i++){
+            count = 0;
+            for (int j = 0 ; j < (n); j++){
+                if (mat[i][j] != 0){
+                    count++;
+                }
+            }
+            if (count == 0){
+                ind1 = rand()%(n);
+                while(i==ind1 || mat[i][ind1]!=0){ind1 = rand()%(n);}
+                mat[i][ind1] = 1 + rand()%100;
+                mat[ind1][i] = mat[i][ind1];
+            }
+            else if(count > 2){ //есть несвязные вершины
+                int c = 0;
+                for (int k = 0; k < (n); k++) {
+                    if (mat[i][k] != 0 && c==1) {
+                        mat[i][k] = 0;
+                        mat[k][i] = 0;
+                        i = k - 1;
+                        break;
+                    }
+                    else{c++;}
+                }
+            }
+        }
+    }
+
+    void MakeProcent(){
+        srand(time(NULL));
+        count_full = n;
+        int count_full_max = n*(n-1);
+        int ind1;
+        int ind2;
+        double res = double(count_full)/double(count_full_max);
+        double tmp = 0.0;
+        if (res<p){
+            while(res < p){
+                ind1 = rand()%(n);
+                ind2 = rand()%(n);
+                while(ind1==ind2 || mat[ind1][ind2]!=0){
+                    ind2 = rand()%(n);
+                }
+                mat[ind1][ind2] = rand()%100;
+                mat[ind2][ind1] = mat[ind1][ind2];
+                count_full+=2;
+                res = double(count_full)/double(count_full_max);
+                cout << res << " " << count_full << " " << count_full_max << endl;
+            }
+        }
+    }
+
+    bool checkSvyaz(){
+        bool is_svyaz = false;
+        for (int i = 0; i< (n); i++){
+            for (int j = i; j < (n); j++){
+                if (mat[i][j] != 0){is_svyaz = true; break;}
+            }
+        }
+        return is_svyaz;
+    }
+
+    void printMat() {
+        cout << "\n";
+        for (int i = 0; i < (n); i++) {
+            for (int j = 0; j < (n); j++) {
+                cout << mat[i][j] << " ";
+            }
+            cout << "\n";
+        }
+        cout <<"\n";
+    }
 };
 
 
 int main() {
-	graph A(15, 0.4);
-	A.generate();
-	A.printMat();
+    graph A(5, 1);
+    A.generate();
+    A.printMat();
 }
